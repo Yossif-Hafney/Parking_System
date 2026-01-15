@@ -3,10 +3,10 @@ package database;
 public class DatabaseConfig {
 
     private static final String DEFAULT_HOST = "localhost";
-    private static final int DEFAULT_PORT = 5432;
+    private static final int DEFAULT_PORT = 5433;
     private static final String DEFAULT_DATABASE = "parking_db";
-    private static final String DEFAULT_USER = "postgres";
-    private static final String DEFAULT_PASSWORD = "postgres";
+    private static final String DEFAULT_USER = "parkinguser";
+    private static final String DEFAULT_PASSWORD = "parkingpass";
 
     private final String host;
     private final int port;

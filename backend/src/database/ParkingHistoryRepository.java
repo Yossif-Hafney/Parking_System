@@ -77,7 +77,7 @@ public class ParkingHistoryRepository {
     }
 
     public double getTodayRevenue() throws SQLException {
-        String sql = 
+        String sql =
             "SELECT COALESCE(SUM(fee), 0) as total FROM parking_history " +
             "WHERE DATE(created_at) = CURRENT_DATE";
 
@@ -88,6 +88,13 @@ public class ParkingHistoryRepository {
             }
         }
         return 0;
+    }
+
+    public void clearAll() throws SQLException {
+        String sql = "DELETE FROM parking_history";
+        try (Statement stmt = db.getConnection().createStatement()) {
+            stmt.executeUpdate(sql);
+        }
     }
 
     private List<ParkingRecord> executeQuery(String sql) throws SQLException {

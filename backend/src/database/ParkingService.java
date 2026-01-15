@@ -113,6 +113,13 @@ public class ParkingService {
     }
 
     /**
+     * Clears all parking history.
+     */
+    public void clearHistory() throws SQLException {
+        historyRepo.clearAll();
+    }
+
+    /**
      * Converts status list to JSON.
      */
     public String statusToJson(List<ParkingSlotRepository.SlotStatus> slots) {

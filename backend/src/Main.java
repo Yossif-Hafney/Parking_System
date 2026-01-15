@@ -1,13 +1,12 @@
 import database.DatabaseConnection;
-import server.ParkingServer;
-
 import java.io.IOException;
 import java.sql.SQLException;
+import server.ParkingServer;
 
 public class Main {
 
     private static final int DEFAULT_PORT = 8080;
-    private static final int DEFAULT_SLOTS = 20;
+    private static final int DEFAULT_SLOTS = 50;
 
     public static void main(String[] args) {
         System.out.println("Welcome to Parking Car System!");

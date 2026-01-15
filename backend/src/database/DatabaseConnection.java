@@ -11,6 +11,14 @@ public class DatabaseConnection {
     private final DatabaseConfig config;
     private Connection connection;
 
+    static {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            System.err.println("PostgreSQL driver not found: " + e.getMessage());
+        }
+    }
+
     private DatabaseConnection(DatabaseConfig config) {
         this.config = config;
     }

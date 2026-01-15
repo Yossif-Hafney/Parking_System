@@ -1,10 +1,9 @@
 package parking;
 
-import vehicles.Vehicle;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import vehicles.Vehicle;
 
 public class ParkingLot {
 
@@ -71,7 +70,7 @@ public class ParkingLot {
         return new ArrayList<>(history);
     }
 
-    // ======================== JSON Helpers ========================
+    //  JSON Helpers for Slots
 
     public synchronized String toJsonSlots() {
         StringBuilder sb = new StringBuilder("[");

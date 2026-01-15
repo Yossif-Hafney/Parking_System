@@ -1,15 +1,9 @@
 package parking;
 
-/**
- * Strategy interface for flexible fee calculation.
- * Implement this to create custom pricing strategies.
- */
-@FunctionalInterface
 public interface FeeCalculator {
 
     double calculateFee(long hours);
 
-    // ======================== Built-in Strategies ========================
 
     /** Flat rate per hour */
     static FeeCalculator flatRate(double ratePerHour) {

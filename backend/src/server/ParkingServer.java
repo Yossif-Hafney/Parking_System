@@ -40,7 +40,7 @@ public class ParkingServer {
         server.createContext("/login", this::handleLogin);
         server.createContext("/logout", this::handleLogout);
         server.createContext("/register", this::handleRegister);
-        
+
         // Protected endpoints
         server.createContext("/park", this::handlePark);
         server.createContext("/remove", this::handleRemove);
@@ -48,6 +48,7 @@ public class ParkingServer {
         server.createContext("/find", this::handleFind);
         server.createContext("/history", this::handleHistory);
         server.createContext("/revenue", this::handleRevenue);
+        server.createContext("/clearHistory", this::handleClearHistory);
         server.createContext("/me", this::handleMe);
     }
 
@@ -69,7 +70,7 @@ public class ParkingServer {
         if (handleCors(exchange)) return;
         String response = "{\"message\": \"Parking Car System API\", \"endpoints\": [" +
             "\"/login\", \"/logout\", \"/register\", \"/me\", " +
-            "\"/park\", \"/remove\", \"/status\", \"/find\", \"/history\", \"/revenue\"]}";
+            "\"/park\", \"/remove\", \"/status\", \"/find\", \"/history\", \"/revenue\", \"/clearHistory\"]}";
         sendJsonResponse(exchange, 200, response);
     }
 
@@ -315,13 +316,18 @@ public class ParkingServer {
 
             for (var record : history) {
                 if (!first) sb.append(',');
+
+                // Calculate hours
+                long durationMillis = record.endTime().getTime() - record.startTime().getTime();
+                double hours = durationMillis / (1000.0 * 60 * 60);
+
                 sb.append(String.format(
-                    "{\"id\":%d,\"slot\":%d,\"plate\":\"%s\",\"type\":\"%s\",\"color\":\"%s\",\"brand\":\"%s\",\"fee\":%.2f,\"endTime\":\"%s\"}",
+                    "{\"id\":%d,\"slot\":%d,\"plate\":\"%s\",\"type\":\"%s\",\"color\":\"%s\",\"brand\":\"%s\",\"fee\":%.2f,\"startTime\":\"%s\",\"endTime\":\"%s\",\"hours\":%.2f}",
                     record.id(), record.slotNumber(), record.plateNumber(),
-                    record.vehicleType(), 
+                    record.vehicleType(),
                     record.color() != null ? record.color() : "",
                     record.brand() != null ? record.brand() : "",
-                    record.fee(), record.endTime()));
+                    record.fee(), record.startTime(), record.endTime(), hours));
                 first = false;
             }
             sb.append(']');
@@ -356,6 +362,33 @@ public class ParkingServer {
             double today = parkingService.getTodayRevenue();
             sendJsonResponse(exchange, 200, String.format(
                 "{\"total\": %.2f, \"today\": %.2f}", total, today));
+        } catch (SQLException e) {
+            sendJsonResponse(exchange, 500, "{\"error\": \"Database error: " + escapeJson(e.getMessage()) + "\"}");
+        }
+    }
+
+    private void handleClearHistory(HttpExchange exchange) throws IOException {
+        if (handleCors(exchange)) return;
+
+        if (!"POST".equals(exchange.getRequestMethod())) {
+            sendJsonResponse(exchange, 405, METHOD_NOT_ALLOWED);
+            return;
+        }
+
+        // Only admin can clear history
+        Optional<Session> sessionOpt = validateSession(exchange);
+        if (sessionOpt.isEmpty()) {
+            sendJsonResponse(exchange, 401, UNAUTHORIZED);
+            return;
+        }
+        if (!sessionOpt.get().isAdmin()) {
+            sendJsonResponse(exchange, 403, "{\"error\": \"Admin access required\"}");
+            return;
+        }
+
+        try {
+            parkingService.clearHistory();
+            sendJsonResponse(exchange, 200, "{\"success\": true, \"message\": \"History cleared successfully\"}");
         } catch (SQLException e) {
             sendJsonResponse(exchange, 500, "{\"error\": \"Database error: " + escapeJson(e.getMessage()) + "\"}");
         }
