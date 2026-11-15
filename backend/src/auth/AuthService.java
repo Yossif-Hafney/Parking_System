@@ -61,22 +61,21 @@ public class AuthService {
         if (username == null || username.trim().isEmpty()) {
             return new RegisterResult(false, "Username is required");
         }
+        if (username.trim().length() > 50) {
+            return new RegisterResult(false, "Username must be 50 characters or fewer");
+        }
         if (password == null || password.length() < 4) {
             return new RegisterResult(false, "Password must be at least 4 characters");
         }
         if (role == null || (!role.equals("admin") && !role.equals("operator"))) {
             role = "operator";
         }
-        
-        Optional<User> existing = userRepository.findByUsername(username.trim());
-        if (existing.isPresent()) {
+
+        User user = new User(username.trim(), PasswordUtils.hashPassword(password), role);
+        if (!userRepository.createIfAbsent(user)) {
             return new RegisterResult(false, "Username already exists");
         }
-        
-        String passwordHash = PasswordUtils.hashPassword(password);
-        User user = new User(username.trim(), passwordHash, role);
-        userRepository.save(user);
-        
+
         return new RegisterResult(true, "User registered successfully");
     }
     
