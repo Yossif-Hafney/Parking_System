@@ -31,8 +31,36 @@ public class UserRepository {
                     user.setId(rs.getInt(1));
                 }
             }
+
         } catch (SQLException e) {
             throw new RuntimeException("Failed to save user: " + e.getMessage(), e);
+        }
+    }
+
+    public boolean createIfAbsent(User user) {
+        String sql = "INSERT INTO users (username, password_hash, role, active) VALUES (?, ?, ?, ?) " +
+                     "ON CONFLICT (username) DO NOTHING";
+
+        try (Connection conn = DatabaseConnection.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPasswordHash());
+            stmt.setString(3, user.getRole());
+            stmt.setBoolean(4, user.isActive());
+
+            if (stmt.executeUpdate() == 0) {
+                return false;
+            }
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    user.setId(rs.getInt(1));
+                }
+            }
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to create user: " + e.getMessage(), e);
         }
     }
     
