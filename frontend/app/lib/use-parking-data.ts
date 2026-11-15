@@ -11,18 +11,6 @@ import type {
   MessageType,
 } from "../types";
 
-interface BackendSlot {
-  slotNumber?: number;
-  id?: number;
-  available: boolean;
-  plateNumber?: string;
-  plate?: string;
-  vehicleType?: string;
-  startTime?: string;
-  color?: string;
-  brand?: string;
-}
-
 interface UseParkingDataReturn {
   // Data
   slots: SlotStatus[];
@@ -86,17 +74,7 @@ export function useParkingData(): UseParkingDataReturn {
         api.getHistory(50),
       ]);
 
-      // Map backend fields to frontend SlotStatus
-      const mappedSlots = slotsData.map((slot: BackendSlot) => ({
-        slotNumber: slot.slotNumber ?? slot.id,
-        available: slot.available,
-        plateNumber: slot.plateNumber ?? slot.plate,
-        vehicleType: slot.vehicleType,
-        startTime: slot.startTime,
-        color: slot.color,
-        brand: slot.brand,
-      }));
-      setSlots(mappedSlots);
+      setSlots(slotsData);
       setHistory(historyData);
 
       // Only fetch revenue if admin
