@@ -8,8 +8,7 @@ public class Car extends Vehicle {
     private static final double DAILY_CAP = 50.0;
 
     public Car(String plateNumber, String color, String brand) {
-        this(plateNumber, color, brand, FeeCalculator.withDailyCap(
-            FeeCalculator.flatRate(DEFAULT_RATE), DAILY_CAP));
+        this(plateNumber, color, brand, FeeCalculator.withDailyCap(FeeCalculator.flatRate(DEFAULT_RATE), DAILY_CAP));
     }
 
     public Car(String plateNumber, String color, String brand, FeeCalculator feeCalculator) {

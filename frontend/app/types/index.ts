@@ -1,7 +1,3 @@
-// ============================================
-// Shared Types for Parking System
-// ============================================
-
 // API Response Types
 export interface LoginResponse {
   success: boolean;
@@ -44,7 +40,9 @@ export interface HistoryRecord {
   color?: string;
   brand?: string;
   fee: number;
+  startTime: string;
   endTime: string;
+  hours: number;
 }
 
 export interface RevenueData {

@@ -1,10 +1,7 @@
 "use client";
 
-// ============================================
-// Parked Vehicles List Component
-// ============================================
-
 import { Card } from "../ui/Card";
+import { FaCar, FaMotorcycle } from "react-icons/fa";
 import type { SlotStatus } from "../../types";
 
 interface ParkedVehiclesListProps {
@@ -37,7 +34,7 @@ export function ParkedVehiclesList({
           >
             <div className="flex items-center gap-3">
               <span className="text-xl">
-                {slot.vehicleType === "car" ? "🚗" : "🏍️"}
+                {slot.vehicleType === "car" ? <FaCar /> : <FaMotorcycle />}
               </span>
               <span className="font-mono text-white font-medium">
                 {slot.plateNumber}

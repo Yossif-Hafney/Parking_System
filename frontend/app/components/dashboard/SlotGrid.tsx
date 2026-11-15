@@ -1,10 +1,8 @@
 "use client";
 
-// ============================================
-// Parking Slot Grid Component
-// ============================================
 
 import type { SlotStatus } from "../../types";
+import { FaParking, FaCarSide, FaSyncAlt, FaHourglassHalf } from "react-icons/fa";
 
 interface SlotGridProps {
   slots: SlotStatus[];
@@ -23,20 +21,20 @@ export function SlotGrid({
     <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/10">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-white">🅿️ Parking Slots</h2>
+        <h2 className="text-xl font-bold text-white flex items-center gap-2"><FaParking /> Parking Slots</h2>
         <button
           onClick={onRefresh}
           className="text-blue-300 hover:text-white transition-colors flex items-center gap-2"
           disabled={loading}
         >
-          {loading ? "⏳" : "🔄"} Refresh
+          {loading ? <FaHourglassHalf className="animate-spin" /> : <FaSyncAlt />} Refresh
         </button>
       </div>
 
       {/* Grid */}
       {loading && slots.length === 0 ? (
         <div className="text-center py-12 text-blue-300">
-          <div className="text-4xl mb-4 animate-pulse">🚗</div>
+          <div className="text-4xl mb-4 animate-pulse"><FaCarSide /></div>
           Loading slots...
         </div>
       ) : (
@@ -104,7 +102,7 @@ function SlotCard({ slot, onClick }: SlotCardProps) {
           slot.available ? "opacity-50" : "animate-pulse"
         }`}
       >
-        {slot.available ? "🅿️" : "🚗"}
+        {slot.available ? <FaParking /> : <FaCarSide />}
       </div>
 
       {/* Info */}

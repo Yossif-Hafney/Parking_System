@@ -1,11 +1,8 @@
 "use client";
 
-// ============================================
-// Remove Vehicle Form Component
-// ============================================
-
 import { useState, FormEvent } from "react";
 import { Card, CardHeader } from "../ui/Card";
+import { FaDoorOpen, FaMoneyBillWave } from "react-icons/fa";
 
 interface RemoveFormProps {
   onRemove: (plate: string) => Promise<{ success: boolean; fee?: number }>;
@@ -32,7 +29,7 @@ export function RemoveForm({ onRemove, initialPlate = "" }: RemoveFormProps) {
 
   return (
     <Card>
-      <CardHeader icon="🚪" title="Remove Vehicle" />
+      <CardHeader icon={<FaDoorOpen />} title="Remove Vehicle" />
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -61,7 +58,9 @@ export function RemoveForm({ onRemove, initialPlate = "" }: RemoveFormProps) {
               Processing...
             </>
           ) : (
-            <>💰 Remove & Calculate Fee</>
+            <>
+              <FaMoneyBillWave /> Remove & Calculate Fee
+            </>
           )}
         </button>
       </form>

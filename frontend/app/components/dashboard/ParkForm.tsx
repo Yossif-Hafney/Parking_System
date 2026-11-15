@@ -1,11 +1,9 @@
 "use client";
 
-// ============================================
-// Park Vehicle Form Component
-// ============================================
 
 import { useState, FormEvent } from "react";
 import { Card, CardHeader } from "../ui/Card";
+import { FaCar, FaMotorcycle, FaParking } from "react-icons/fa";
 
 const CAR_BRANDS = [
   "BMW",
@@ -67,7 +65,7 @@ export function ParkForm({ onPark }: ParkFormProps) {
 
   return (
     <Card>
-      <CardHeader icon="🚗" title="Park Vehicle" />
+      <CardHeader icon={<FaCar />} title="Park Vehicle" />
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Plate Number */}
@@ -94,7 +92,7 @@ export function ParkForm({ onPark }: ParkFormProps) {
           <div className="grid grid-cols-2 gap-3">
             <VehicleTypeButton
               type="car"
-              icon="🚗"
+              icon={<FaCar />}
               label="Car"
               price="$10/hour"
               selected={vehicleType === "car"}
@@ -103,7 +101,7 @@ export function ParkForm({ onPark }: ParkFormProps) {
             />
             <VehicleTypeButton
               type="bike"
-              icon="🏍️"
+              icon={<FaMotorcycle />}
               label="Bike"
               price="$5/hour"
               selected={vehicleType === "bike"}
@@ -163,7 +161,9 @@ export function ParkForm({ onPark }: ParkFormProps) {
               Parking...
             </>
           ) : (
-            <>🅿️ Park Vehicle</>
+            <>
+              <FaParking /> Park Vehicle
+            </>
           )}
         </button>
       </form>
@@ -172,9 +172,11 @@ export function ParkForm({ onPark }: ParkFormProps) {
 }
 
 // Vehicle type button
+import type { ReactNode } from "react";
+
 interface VehicleTypeButtonProps {
   type: string;
-  icon: string;
+  icon: ReactNode;
   label: string;
   price: string;
   selected: boolean;

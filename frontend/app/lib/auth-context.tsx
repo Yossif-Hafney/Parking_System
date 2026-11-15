@@ -1,8 +1,5 @@
 "use client";
 
-// ============================================
-// Auth Context - Global Authentication State
-// ============================================
 
 import {
   createContext,

@@ -1,10 +1,7 @@
 "use client";
 
-// ============================================
-// Header Component
-// ============================================
-
 import { useAuth } from "../../lib/auth-context";
+import { FaCarSide, FaCrown, FaUser } from "react-icons/fa";
 
 export function Header() {
   const { username, isAdmin, logout, isLoading } = useAuth();
@@ -15,7 +12,7 @@ export function Header() {
         {/* Logo */}
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-2xl shadow-lg">
-            🚗
+            <FaCarSide />
           </div>
           <div>
             <h1 className="text-xl font-bold text-white">Parking System</h1>
@@ -27,8 +24,8 @@ export function Header() {
         <div className="flex items-center gap-4">
           <div className="text-right">
             <p className="text-white font-medium">{username}</p>
-            <p className="text-xs text-blue-300">
-              {isAdmin ? "👑 Administrator" : "👤 Operator"}
+            <p className="text-xs text-blue-300 flex items-center gap-1">
+              {isAdmin ? <><FaCrown className="inline" /> Administrator</> : <><FaUser className="inline" /> Operator</>}
             </p>
           </div>
           <button

@@ -1,8 +1,5 @@
 "use client";
 
-// ============================================
-// Occupancy Bar Component
-// ============================================
 
 interface OccupancyBarProps {
   occupancyRate: number;

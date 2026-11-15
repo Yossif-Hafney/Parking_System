@@ -1,10 +1,7 @@
 "use client";
 
-// ============================================
-// Modal Component - Reusable Dialog
-// ============================================
-
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface ModalProps {
   isOpen: boolean;
@@ -14,6 +11,13 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, children, title }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
   // Close on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -31,11 +35,11 @@ export function Modal({ isOpen, onClose, children, title }: ModalProps) {
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
@@ -57,4 +61,6 @@ export function Modal({ isOpen, onClose, children, title }: ModalProps) {
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

@@ -1,11 +1,8 @@
 "use client";
 
-// ============================================
-// Slot Detail Modal Component
-// ============================================
-
 import { Modal } from "../ui/Modal";
 import type { SlotStatus } from "../../types";
+import { FaParking, FaCarSide, FaMotorcycle, FaShuttleVan, FaCheckCircle, FaTimesCircle, FaPalette, FaTag, FaClock, FaDoorOpen } from "react-icons/fa";
 
 interface SlotDetailModalProps {
   slot: SlotStatus | null;
@@ -31,18 +28,18 @@ export function SlotDetailModal({
               : "bg-gradient-to-br from-red-500 to-orange-600"
           }`}
         >
-          {slot.available ? "🅿️" : "🚗"}
+          {slot.available ? <FaParking /> : <FaCarSide />}
         </div>
         <div>
           <h3 className="text-2xl font-bold text-white">
             Slot #{slot.slotNumber}
           </h3>
           <p
-            className={`text-sm font-medium ${
+            className={`text-sm font-medium flex items-center gap-1 ${
               slot.available ? "text-green-400" : "text-red-400"
             }`}
           >
-            {slot.available ? "✅ Available" : "🔴 Occupied"}
+            {slot.available ? <><FaCheckCircle /> Available</> : <><FaTimesCircle /> Occupied</>}
           </p>
         </div>
       </div>
@@ -50,7 +47,7 @@ export function SlotDetailModal({
       {/* Content */}
       {slot.available ? (
         <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-6 text-center">
-          <div className="text-6xl mb-4">🅿️</div>
+          <div className="text-6xl mb-4 flex justify-center"><FaParking /></div>
           <p className="text-green-300 text-lg font-medium">
             This slot is available!
           </p>
@@ -63,7 +60,7 @@ export function SlotDetailModal({
           {/* Vehicle Info */}
           <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
             <h4 className="text-blue-300 text-sm font-medium mb-4 flex items-center gap-2">
-              <span>🚘</span> Vehicle Information
+              <FaCarSide /> Vehicle Information
             </h4>
 
             <div className="space-y-3">
@@ -81,10 +78,10 @@ export function SlotDetailModal({
                 value={
                   <span className="text-white flex items-center gap-2">
                     {slot.vehicleType === "car"
-                      ? "🚗"
+                      ? <FaCarSide />
                       : slot.vehicleType === "motorcycle"
-                      ? "🏍️"
-                      : "🚐"}
+                      ? <FaMotorcycle />
+                      : <FaShuttleVan />}
                     <span className="capitalize">
                       {slot.vehicleType || "Unknown"}
                     </span>
@@ -97,7 +94,7 @@ export function SlotDetailModal({
                   label="Color"
                   value={
                     <span className="text-white flex items-center gap-2">
-                      🎨 {slot.color}
+                      <FaPalette /> {slot.color}
                     </span>
                   }
                 />
@@ -108,7 +105,7 @@ export function SlotDetailModal({
                   label="Brand"
                   value={
                     <span className="text-white flex items-center gap-2">
-                      🏷️ {slot.brand}
+                      <FaTag /> {slot.brand}
                     </span>
                   }
                 />
@@ -119,7 +116,7 @@ export function SlotDetailModal({
                   label="Entry Time"
                   value={
                     <span className="text-yellow-400 flex items-center gap-2">
-                      🕐 {new Date(slot.startTime).toLocaleString()}
+                      <FaClock /> {new Date(slot.startTime).toLocaleString()}
                     </span>
                   }
                 />
@@ -140,7 +137,7 @@ export function SlotDetailModal({
             }}
             className="w-full py-4 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold rounded-xl transition-all duration-200 shadow-lg hover:shadow-red-500/25 flex items-center justify-center gap-2"
           >
-            <span>🚪</span> Remove Vehicle & Calculate Fee
+            <FaDoorOpen /> Remove Vehicle & Calculate Fee
           </button>
         </div>
       )}

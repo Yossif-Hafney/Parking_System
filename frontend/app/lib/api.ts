@@ -1,7 +1,3 @@
-// ============================================
-// API Service - Handles all HTTP requests
-// ============================================
-
 import type {
   LoginResponse,
   ParkResponse,
@@ -97,13 +93,16 @@ class ApiService {
 
   async login(username: string, password: string): Promise<LoginResponse> {
     try {
-      const res = await fetch(`${API_BASE}/login`, {
+      const endpoint = `${API_BASE}/login`;
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
+
       const data = await res.json();
+      console.log("[API] Fetched:", endpoint, "Data:", data);
 
       if (data.success && data.token) {
         this.setAuth(data.token, data.username, data.role);
@@ -129,7 +128,6 @@ class ApiService {
         });
       }
     } catch {
-      // Ignore logout errors - we'll clear local state anyway
     } finally {
       this.clearAuth();
     }
@@ -141,20 +139,23 @@ class ApiService {
       const token = this.getToken();
       if (!token) return null;
 
-      const res = await fetch(`${API_BASE}/me`, {
+      const endpoint = `${API_BASE}/me`;
+      const res = await fetch(endpoint, {
         headers: this.getHeaders(),
       });
 
       if (res.ok) {
-        return await res.json();
+        const data = await res.json();
+        console.log("[API] Fetched:", endpoint, "Data:", data);
+        return data;
       }
 
       // Token invalid, clear auth
       if (res.status === 401) {
         this.clearAuth();
       }
-    } catch {
-      // Network error - don't clear auth, might be temporary
+    } catch (error) {
+      console.error("Session validation error", error);
     }
     return null;
   }
@@ -170,12 +171,15 @@ class ApiService {
     brand: string
   ): Promise<ParkResponse> {
     try {
-      const res = await fetch(`${API_BASE}/park`, {
+      const endpoint = `${API_BASE}/park`;
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: this.getHeaders(),
         body: JSON.stringify({ plate, type, color, brand }),
       });
-      return await res.json();
+      const data = await res.json();
+      console.log("[API] Fetched:", endpoint, "Data:", data);
+      return data;
     } catch (error) {
       console.error("Park error:", error);
       return { error: "Connection error" };
@@ -184,12 +188,15 @@ class ApiService {
 
   async removeVehicle(plate: string): Promise<RemoveResponse> {
     try {
-      const res = await fetch(`${API_BASE}/remove`, {
+      const endpoint = `${API_BASE}/remove`;
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: this.getHeaders(),
         body: JSON.stringify({ plate }),
       });
-      return await res.json();
+      const data = await res.json();
+      console.log("[API] Fetched:", endpoint, "Data:", data);
+      return data;
     } catch (error) {
       console.error("Remove error:", error);
       return { error: "Connection error" };
@@ -198,13 +205,15 @@ class ApiService {
 
   async getStatus(): Promise<SlotStatus[]> {
     try {
-      const res = await fetch(`${API_BASE}/status`, {
+      const endpoint = `${API_BASE}/status`;
+      const res = await fetch(endpoint, {
         headers: this.getHeaders(),
       });
 
       if (!res.ok) return [];
 
       const data = await res.json();
+      console.log("[API] Fetched:", endpoint, "Data:", data);
       return Array.isArray(data) ? data : [];
     } catch (error) {
       console.error("Status error:", error);
@@ -214,13 +223,13 @@ class ApiService {
 
   async findVehicle(plate: string): Promise<SearchResult> {
     try {
-      const res = await fetch(
-        `${API_BASE}/find?plate=${encodeURIComponent(plate)}`,
-        {
-          headers: this.getHeaders(),
-        }
-      );
-      return await res.json();
+      const endpoint = `${API_BASE}/find?plate=${encodeURIComponent(plate)}`;
+      const res = await fetch(endpoint, {
+        headers: this.getHeaders(),
+      });
+      const data = await res.json();
+      console.log("[API] Fetched:", endpoint, "Data:", data);
+      return data;
     } catch (error) {
       console.error("Find error:", error);
       return { found: false };
@@ -229,13 +238,15 @@ class ApiService {
 
   async getHistory(limit = 50): Promise<HistoryRecord[]> {
     try {
-      const res = await fetch(`${API_BASE}/history?limit=${limit}`, {
+      const endpoint = `${API_BASE}/history?limit=${limit}`;
+      const res = await fetch(endpoint, {
         headers: this.getHeaders(),
       });
 
       if (!res.ok) return [];
 
       const data = await res.json();
+      console.log("[API] Fetched:", endpoint, "Data:", data);
       return Array.isArray(data) ? data : [];
     } catch (error) {
       console.error("History error:", error);
@@ -245,16 +256,47 @@ class ApiService {
 
   async getRevenue(): Promise<RevenueData | null> {
     try {
-      const res = await fetch(`${API_BASE}/revenue`, {
+      const endpoint = `${API_BASE}/revenue`;
+      const res = await fetch(endpoint, {
         headers: this.getHeaders(),
       });
 
       if (!res.ok) return null;
 
-      return await res.json();
+      const data = await res.json();
+      console.log("[API] Fetched:", endpoint, "Data:", data);
+      return data;
     } catch (error) {
       console.error("Revenue error:", error);
       return null;
+    }
+  }
+
+  async clearHistory(): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+      const endpoint = `${API_BASE}/clearHistory`;
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: this.getHeaders(),
+      });
+
+      console.log("[API] Response status:", res.status, res.statusText);
+
+      if (!res.ok) {
+        const data = await res.json();
+        console.log("[API] Error response:", data);
+        return {
+          success: false,
+          error: data.error || `HTTP ${res.status}: ${res.statusText}`
+        };
+      }
+
+      const data = await res.json();
+      console.log("[API] Success response:", data);
+      return data;
+    } catch (error) {
+      console.error("Clear history error:", error);
+      return { success: false, error: "Connection error" };
     }
   }
 }

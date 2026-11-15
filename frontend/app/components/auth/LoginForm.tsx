@@ -1,11 +1,7 @@
-"use client";
-
-// ============================================
-// Login Form Component
-// ============================================
-
+"use client"
 import { useState, FormEvent } from "react";
 import { useAuth } from "../../lib/auth-context";
+import { FaCarSide, FaCar, FaUser, FaLock, FaExclamationTriangle, FaRocket, FaParking } from "react-icons/fa";
 
 export function LoginForm() {
   const { login, isLoading } = useAuth();
@@ -45,10 +41,10 @@ export function LoginForm() {
 
       {/* Floating Car Animation */}
       <div className="absolute top-1/4 left-10 text-6xl animate-bounce opacity-20">
-        🚗
+        <FaCarSide />
       </div>
       <div className="absolute bottom-1/4 right-10 text-6xl animate-bounce animation-delay-1000 opacity-20">
-        🚙
+        <FaCar />
       </div>
 
       {/* Login Card */}
@@ -57,7 +53,7 @@ export function LoginForm() {
           {/* Logo */}
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transform hover:rotate-6 transition-transform">
-              <span className="text-4xl">🅿️</span>
+              <FaParking className="text-4xl" />
             </div>
             <h1 className="text-3xl font-bold text-white mb-2">
               Parking System
@@ -68,7 +64,7 @@ export function LoginForm() {
           {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm flex items-center gap-2">
-              <span>⚠️</span>
+              <FaExclamationTriangle />
               {error}
             </div>
           )}
@@ -81,7 +77,7 @@ export function LoginForm() {
               </label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
-                  👤
+                  <FaUser />
                 </span>
                 <input
                   type="text"
@@ -102,7 +98,7 @@ export function LoginForm() {
               </label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50">
-                  🔒
+                  <FaLock />
                 </span>
                 <input
                   type="password"
@@ -129,29 +125,12 @@ export function LoginForm() {
                 </>
               ) : (
                 <>
-                  <span>🚀</span>
+                  <FaRocket />
                   Sign In
                 </>
               )}
             </button>
           </form>
-
-          {/* Demo Credentials */}
-          <div className="mt-8 pt-6 border-t border-white/10">
-            <p className="text-center text-white/50 text-sm mb-3">
-              Demo Credentials
-            </p>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="bg-white/5 rounded-lg p-3 text-center">
-                <p className="text-blue-300 font-medium">Admin</p>
-                <p className="text-white/60">admin / admin123</p>
-              </div>
-              <div className="bg-white/5 rounded-lg p-3 text-center">
-                <p className="text-green-300 font-medium">User</p>
-                <p className="text-white/60">user / user123</p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Footer */}
@@ -160,7 +139,7 @@ export function LoginForm() {
         </p>
       </div>
 
-      <style jsx>{`
+      <style jsx scoped>{`
         @keyframes blob {
           0%,
           100% {

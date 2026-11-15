@@ -1,8 +1,5 @@
 "use client";
 
-// ============================================
-// Custom Hook for Parking Data
-// ============================================
 
 import { useState, useEffect, useCallback } from "react";
 import { api } from "./api";

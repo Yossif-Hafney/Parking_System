@@ -1,12 +1,9 @@
 "use client";
 
-// ============================================
-// Search Vehicle Component
-// ============================================
-
 import { useState, KeyboardEvent } from "react";
 import { Card, CardHeader } from "../ui/Card";
 import type { SearchResult } from "../../types";
+import { FaSearch, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 interface SearchFormProps {
   onSearch: (plate: string) => Promise<SearchResult>;
@@ -37,7 +34,7 @@ export function SearchForm({ onSearch }: SearchFormProps) {
 
   return (
     <Card>
-      <CardHeader icon="🔍" title="Find Vehicle" />
+      <CardHeader icon={<FaSearch />} title="Find Vehicle" />
 
       <div className="flex gap-2">
         <input
@@ -72,13 +69,13 @@ export function SearchForm({ onSearch }: SearchFormProps) {
           }`}
         >
           {result.found ? (
-            <div className="text-green-300">
-              ✅ Found in{" "}
+            <div className="text-green-300 flex items-center gap-2">
+              <FaCheckCircle /> Found in
               <span className="font-bold">Slot {result.slotId}</span>
               <span className="ml-2 opacity-70">({result.type})</span>
             </div>
           ) : (
-            <div className="text-red-300">❌ Vehicle not found</div>
+            <div className="text-red-300 flex items-center gap-2"><FaTimesCircle /> Vehicle not found</div>
           )}
         </div>
       )}

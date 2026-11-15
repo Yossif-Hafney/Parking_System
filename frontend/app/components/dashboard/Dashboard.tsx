@@ -1,10 +1,6 @@
 "use client";
 
-// ============================================
-// Main Dashboard Component
-// ============================================
-
-import { useState } from "react";
+import { useState, type JSX } from "react";
 import { useParkingData } from "../../lib/use-parking-data";
 import { Toast } from "../ui/Toast";
 import { Header } from "./Header";
@@ -17,12 +13,14 @@ import { SearchForm } from "./SearchForm";
 import { ParkedVehiclesList } from "./ParkedVehiclesList";
 import { HistoryTable } from "./HistoryTable";
 import { OccupancyBar } from "./OccupancyBar";
+
+import { FaChartBar, FaCarSide, FaClipboardList } from "react-icons/fa";
 import type { SlotStatus, TabType } from "../../types";
 
-const TABS: { id: TabType; icon: string; label: string }[] = [
-  { id: "dashboard", icon: "📊", label: "Dashboard" },
-  { id: "park", icon: "🚙", label: "Park" },
-  { id: "history", icon: "📋", label: "History" },
+const TABS: { id: TabType; icon: JSX.Element; label: string }[] = [
+  { id: "dashboard", icon: <FaChartBar />, label: "Dashboard" },
+  { id: "park", icon: <FaCarSide />, label: "Park" },
+  { id: "history", icon: <FaClipboardList />, label: "History" },
 ];
 
 export function Dashboard() {
@@ -40,6 +38,7 @@ export function Dashboard() {
     loading,
     message,
     loadData,
+    showMessage,
     clearMessage,
     parkVehicle,
     removeVehicle,
@@ -61,13 +60,15 @@ export function Dashboard() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
+              className={`flex-1 px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
                 activeTab === tab.id
                   ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
                   : "text-blue-300 hover:text-white hover:bg-white/10"
               }`}
+              style={{ minWidth: 0 }}
             >
-              {tab.icon} {tab.label}
+              <span className="text-lg flex items-center">{tab.icon}</span>
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
@@ -118,7 +119,12 @@ export function Dashboard() {
 
         {/* History Tab */}
         {activeTab === "history" && (
-          <HistoryTable history={history} revenue={revenue} />
+          <HistoryTable
+            history={history}
+            revenue={revenue}
+            onRefresh={loadData}
+            onMessage={showMessage}
+          />
         )}
       </main>
 

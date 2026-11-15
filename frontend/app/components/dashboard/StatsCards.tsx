@@ -1,11 +1,8 @@
 "use client";
 
-// ============================================
-// Stats Cards Component
-// ============================================
-
 import { useAuth } from "../../lib/auth-context";
 import type { RevenueData } from "../../types";
+import { FaParking, FaCheckCircle, FaCarSide, FaMoneyBillWave } from "react-icons/fa";
 
 interface StatsCardsProps {
   totalSlots: number;
@@ -28,7 +25,7 @@ export function StatsCards({
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {/* Total Slots */}
       <StatCard
-        icon="🅿️"
+        icon={<FaParking />}
         label="Total"
         value={totalSlots}
         sublabel="Parking Slots"
@@ -37,7 +34,7 @@ export function StatsCards({
 
       {/* Available */}
       <StatCard
-        icon="✅"
+        icon={<FaCheckCircle />}
         label="Free"
         value={availableSlots}
         sublabel="Available Now"
@@ -46,7 +43,7 @@ export function StatsCards({
 
       {/* Occupied */}
       <StatCard
-        icon="🚙"
+        icon={<FaCarSide />}
         label={`${occupancyRate}%`}
         value={occupiedSlots}
         sublabel="Occupied"
@@ -58,7 +55,7 @@ export function StatsCards({
         <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30 transition-all duration-200">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-purple-500/30 rounded-xl flex items-center justify-center text-2xl">
-              💰
+              <FaMoneyBillWave />
             </div>
             <span className="text-purple-300 text-sm">Today</span>
           </div>
@@ -74,7 +71,7 @@ export function StatsCards({
 
 // Individual stat card
 interface StatCardProps {
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   value: number;
   sublabel: string;

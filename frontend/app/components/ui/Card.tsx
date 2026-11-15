@@ -1,9 +1,5 @@
 "use client";
 
-// ============================================
-// Card Component - Container with styling
-// ============================================
-
 import { ReactNode } from "react";
 
 interface CardProps {
@@ -24,8 +20,10 @@ export function Card({ children, className = "", hover = false }: CardProps) {
   );
 }
 
+
+
 interface CardHeaderProps {
-  icon: string;
+  icon: ReactNode;
   title: string;
   action?: ReactNode;
 }
