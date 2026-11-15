@@ -94,10 +94,11 @@ public class ParkingServer {
         if (result.success()) {
             sendJsonResponse(exchange, 200, String.format(
                 "{\"success\": true, \"message\": \"%s\", \"token\": \"%s\", \"username\": \"%s\", \"role\": \"%s\"}",
-                result.message(), result.token(), result.username(), result.role()));
+                escapeJson(result.message()), escapeJson(result.token()),
+                escapeJson(result.username()), escapeJson(result.role())));
         } else {
             sendJsonResponse(exchange, 401, String.format(
-                "{\"success\": false, \"message\": \"%s\"}", result.message()));
+                "{\"success\": false, \"message\": \"%s\"}", escapeJson(result.message())));
         }
     }
 
@@ -127,17 +128,13 @@ public class ParkingServer {
             return;
         }
 
-        // Only admin can register new users
-        Optional<Session> sessionOpt = validateSession(exchange);
-        if (sessionOpt.isEmpty() || !sessionOpt.get().isAdmin()) {
-            sendJsonResponse(exchange, 403, "{\"error\": \"Only admin can register new users\"}");
-            return;
-        }
-
         String body = readRequestBody(exchange);
         String username = extractJsonValue(body, "username");
         String password = extractJsonValue(body, "password");
-        String role = extractJsonValue(body, "role");
+        Optional<Session> sessionOpt = validateSession(exchange);
+        String role = sessionOpt.isPresent() && sessionOpt.get().isAdmin()
+            ? extractJsonValue(body, "role")
+            : "operator";
 
         var result = authService.register(username, password, role);
 
@@ -167,7 +164,8 @@ public class ParkingServer {
         Session session = sessionOpt.get();
         sendJsonResponse(exchange, 200, String.format(
             "{\"username\": \"%s\", \"role\": \"%s\", \"loggedInSince\": \"%s\"}",
-            session.getUsername(), session.getRole(), session.getCreatedAt()));
+            escapeJson(session.getUsername()), escapeJson(session.getRole()),
+            escapeJson(session.getCreatedAt().toString())));
     }
 
     private void handlePark(HttpExchange exchange) throws IOException {
@@ -484,6 +482,8 @@ public class ParkingServer {
     }
 
     private String extractJsonValue(String json, String key) {
+        if (json == null) return null;
+
         String search = "\"" + key + "\"";
         int keyIndex = json.indexOf(search);
         if (keyIndex == -1) return null;
@@ -491,17 +491,67 @@ public class ParkingServer {
         int colonIndex = json.indexOf(':', keyIndex);
         if (colonIndex == -1) return null;
 
-        int startQuote = json.indexOf('"', colonIndex);
-        if (startQuote == -1) return null;
+        int startQuote = colonIndex + 1;
+        while (startQuote < json.length() && Character.isWhitespace(json.charAt(startQuote))) {
+            startQuote++;
+        }
+        if (startQuote == json.length() || json.charAt(startQuote) != '"') return null;
 
-        int endQuote = json.indexOf('"', startQuote + 1);
-        if (endQuote == -1) return null;
+        StringBuilder value = new StringBuilder();
+        for (int i = startQuote + 1; i < json.length(); i++) {
+            char current = json.charAt(i);
+            if (current == '"') return value.toString();
+            if (current != '\\') {
+                value.append(current);
+                continue;
+            }
 
-        return json.substring(startQuote + 1, endQuote);
+            if (++i == json.length()) return null;
+            switch (json.charAt(i)) {
+                case '"', '\\', '/' -> value.append(json.charAt(i));
+                case 'b' -> value.append('\b');
+                case 'f' -> value.append('\f');
+                case 'n' -> value.append('\n');
+                case 'r' -> value.append('\r');
+                case 't' -> value.append('\t');
+                case 'u' -> {
+                    if (i + 4 >= json.length()) return null;
+                    try {
+                        value.append((char) Integer.parseInt(json.substring(i + 1, i + 5), 16));
+                    } catch (NumberFormatException e) {
+                        return null;
+                    }
+                    i += 4;
+                }
+                default -> {
+                    return null;
+                }
+            }
+        }
+        return null;
     }
 
     private String escapeJson(String value) {
         if (value == null) return "";
-        return value.replace("\\", "\\\\").replace("\"", "\\\"");
+        StringBuilder escaped = new StringBuilder();
+        for (char current : value.toCharArray()) {
+            switch (current) {
+                case '"' -> escaped.append("\\\"");
+                case '\\' -> escaped.append("\\\\");
+                case '\b' -> escaped.append("\\b");
+                case '\f' -> escaped.append("\\f");
+                case '\n' -> escaped.append("\\n");
+                case '\r' -> escaped.append("\\r");
+                case '\t' -> escaped.append("\\t");
+                default -> {
+                    if (current < 0x20) {
+                        escaped.append(String.format("\\u%04x", (int) current));
+                    } else {
+                        escaped.append(current);
+                    }
+                }
+            }
+        }
+        return escaped.toString();
     }
 }
