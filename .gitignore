@@ -38,11 +38,10 @@ frontend/*.log
 backend/*.log
 
 # --- Java / backend build output ---
+*.class
 backend/out/
 backend/bin/
 backend/build/
-backend/**/*.class
-backend/*.class
 
 # --- Environment files ---
 .env
