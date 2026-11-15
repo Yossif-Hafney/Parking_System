@@ -1,39 +1,47 @@
 "use client";
 
 import { useAuth } from "../../lib/auth-context";
-import { FaCarSide, FaCrown, FaUser } from "react-icons/fa";
+import { FaCarSide, FaCrown, FaUser, FaShieldAlt } from "react-icons/fa";
 
 export function Header() {
   const { username, isAdmin, logout, isLoading } = useAuth();
 
   return (
-    <header className="bg-white/10 backdrop-blur-lg border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-        {/* Logo */}
+    <header className="sticky top-0 z-30 border-b border-white/10 bg-slate-950/55 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-2xl shadow-lg">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-500 to-violet-600 text-2xl text-white shadow-lg shadow-blue-500/25">
             <FaCarSide />
           </div>
           <div>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-cyan-300/80">
+              Parking control
+            </p>
             <h1 className="text-xl font-bold text-white">Parking System</h1>
-            <p className="text-xs text-blue-300">Management Dashboard</p>
           </div>
         </div>
 
-        {/* User Info */}
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-white font-medium">{username}</p>
-            <p className="text-xs text-blue-300 flex items-center gap-1">
-              {isAdmin ? <><FaCrown className="inline" /> Administrator</> : <><FaUser className="inline" /> Operator</>}
+        <div className="flex items-center gap-3">
+          <div className="hidden rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300 sm:flex sm:items-center sm:gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.9)]" />
+            Live operations
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-right shadow-lg shadow-slate-950/20">
+            <p className="text-sm font-semibold text-white">{username}</p>
+            <p className="mt-0.5 flex items-center justify-end gap-1 text-[11px] text-sky-200">
+              {isAdmin ? <FaCrown className="text-xs" /> : <FaUser className="text-xs" />}
+              {isAdmin ? "Administrator" : "Operator"}
             </p>
           </div>
+
           <button
             onClick={logout}
             disabled={isLoading}
-            className="bg-red-500/20 hover:bg-red-500/30 text-red-300 hover:text-white px-4 py-2 rounded-lg transition-all duration-200 border border-red-500/30 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-2.5 text-sm font-medium text-red-200 transition hover:border-red-300/60 hover:bg-red-500/20 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isLoading ? "..." : "Logout"}
+            <FaShieldAlt className="text-xs" />
+            {isLoading ? "Signing out..." : "Logout"}
           </button>
         </div>
       </div>
