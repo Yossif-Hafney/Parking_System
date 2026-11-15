@@ -31,7 +31,9 @@ public class DatabaseConfig {
     }
 
     public String getConnectionUrl() {
-        return String.format("jdbc:postgresql://%s:%d/%s", host, port, database);
+        String url = String.format("jdbc:postgresql://%s:%d/%s", host, port, database);
+        String sslMode = getEnv("DB_SSLMODE", "");
+        return sslMode.isBlank() ? url : url + "?sslmode=" + sslMode;
     }
 
     public String getUser() {
