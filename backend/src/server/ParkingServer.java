@@ -12,7 +12,10 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ParkingServer {
 
@@ -411,15 +414,45 @@ public class ParkingServer {
     }
 
     private boolean handleCors(HttpExchange exchange) throws IOException {
-        exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
-        exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-        exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        String origin = exchange.getRequestHeaders().getFirst("Origin");
+        Set<String> allowedOrigins = getAllowedCorsOrigins();
+        boolean originAllowed = origin == null || allowedOrigins.contains(origin);
+
+        if (origin != null && originAllowed) {
+            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", origin);
+            exchange.getResponseHeaders().set("Vary", "Origin");
+        }
 
         if ("OPTIONS".equals(exchange.getRequestMethod())) {
-            exchange.sendResponseHeaders(204, -1);
+            if (originAllowed) {
+                exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+                exchange.getResponseHeaders().set("Access-Control-Max-Age", "600");
+                exchange.sendResponseHeaders(204, -1);
+            } else {
+                exchange.sendResponseHeaders(403, -1);
+            }
             return true;
         }
+
+        if (!originAllowed) {
+            sendJsonResponse(exchange, 403, "{\"error\": \"Origin not allowed\"}");
+            return true;
+        }
+
         return false;
+    }
+
+    private Set<String> getAllowedCorsOrigins() {
+        String configuredOrigins = System.getenv("CORS_ALLOWED_ORIGINS");
+        if (configuredOrigins == null || configuredOrigins.isBlank()) {
+            return Set.of("http://localhost:3000");
+        }
+
+        return Arrays.stream(configuredOrigins.split(","))
+            .map(String::trim)
+            .filter(origin -> !origin.isEmpty())
+            .collect(Collectors.toUnmodifiableSet());
     }
 
     private void sendJsonResponse(HttpExchange exchange, int statusCode, String response) throws IOException {

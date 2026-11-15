@@ -81,12 +81,34 @@ public class AuthService {
     }
     
     public void createDefaultAdmin() {
-        Optional<User> admin = userRepository.findByUsername("admin");
-        if (admin.isEmpty()) {
-            String passwordHash = PasswordUtils.hashPassword("admin123");
-            User adminUser = new User("admin", passwordHash, "admin");
-            userRepository.save(adminUser);
-            System.out.println("Default admin created (username: admin, password: admin123)");
+        boolean production = "production".equalsIgnoreCase(System.getenv("APP_ENV"));
+        String username = getEnv("DEFAULT_ADMIN_USERNAME");
+        String password = getEnv("DEFAULT_ADMIN_PASSWORD");
+
+        if (production && (username == null || username.isBlank()
+                || password == null || password.length() < 12)) {
+            throw new IllegalStateException(
+                "Production requires DEFAULT_ADMIN_USERNAME and a DEFAULT_ADMIN_PASSWORD of at least 12 characters");
         }
+
+        if (username == null || username.isBlank()) {
+            username = "admin";
+        }
+        if (password == null || password.isBlank()) {
+            password = "admin123";
+        }
+
+        Optional<User> admin = userRepository.findByUsername(username);
+        if (admin.isEmpty()) {
+            String passwordHash = PasswordUtils.hashPassword(password);
+            User adminUser = new User(username, passwordHash, "admin");
+            userRepository.save(adminUser);
+            System.out.println("Default admin created (username: " + username + ")");
+        }
+    }
+
+    private static String getEnv(String key) {
+        String value = System.getenv(key);
+        return value == null || value.isBlank() ? null : value;
     }
 }
