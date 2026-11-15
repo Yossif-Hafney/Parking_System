@@ -24,7 +24,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <div className="hidden rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300 sm:flex sm:items-center sm:gap-2">
             <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.9)]" />
-            Live operations
+            Live proccessing
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-right shadow-lg shadow-slate-950/20">
