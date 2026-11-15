@@ -7,8 +7,7 @@ import {
   FaCheckCircle,
   FaCarSide,
   FaMoneyBillWave,
-  FaArrowTrendUp,
-} from "react-icons/fa6";
+} from "react-icons/fa";
 
 interface StatsCardsProps {
   totalSlots: number;
@@ -67,10 +66,6 @@ export function StatsCards({
             <div>
               <div className="text-3xl font-bold text-white">${revenue.today.toFixed(0)}</div>
               <div className="mt-1 text-sm text-violet-200/80">Revenue</div>
-            </div>
-            <div className="flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-1 text-[11px] font-semibold text-emerald-300">
-              <FaArrowTrendUp />
-              +{Math.max(0, Math.round((revenue.today / Math.max(1, totalSlots)) * 3))}%
             </div>
           </div>
         </div>
