@@ -155,7 +155,7 @@ export function Dashboard() {
               history={history}
               revenue={revenue}
               onRefresh={loadData}
-              onMessage={showMessage}
+              onMessage={(message) => showMessage(message.type, message.text)}
             />
           )}
         </main>
