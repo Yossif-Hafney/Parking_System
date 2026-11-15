@@ -1,5 +1,6 @@
 "use client"
 import { useState, FormEvent } from "react";
+import Link from "next/link";
 import { useAuth } from "../../lib/auth-context";
 import { FaCarSide, FaCar, FaUser, FaLock, FaExclamationTriangle, FaRocket, FaParking } from "react-icons/fa";
 
@@ -22,7 +23,7 @@ export function LoginForm() {
         setError(result.message || "Login failed");
       }
     } catch {
-      setError("Connection error. Please try again.");
+      setError("Login failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -131,6 +132,13 @@ export function LoginForm() {
               )}
             </button>
           </form>
+
+          <p className="mt-6 text-center text-sm text-blue-100">
+            New to Parking System?{" "}
+            <Link href="/register" className="font-semibold text-white underline underline-offset-4 hover:text-blue-200">
+              Register now
+            </Link>
+          </p>
         </div>
 
         {/* Footer */}
