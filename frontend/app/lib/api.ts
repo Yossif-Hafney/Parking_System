@@ -1,5 +1,6 @@
 import type {
   LoginResponse,
+  RegisterResponse,
   ParkResponse,
   RemoveResponse,
   SlotStatus,
@@ -111,6 +112,24 @@ class ApiService {
       return data;
     } catch (error) {
       console.error("Login error:", error);
+      return {
+        success: false,
+        message: "Connection error. Please check if the server is running.",
+      };
+    }
+  }
+
+  async register(username: string, password: string): Promise<RegisterResponse> {
+    try {
+      const res = await fetch(`${API_BASE}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      return await res.json();
+    } catch (error) {
+      console.error("Registration error:", error);
       return {
         success: false,
         message: "Connection error. Please check if the server is running.",

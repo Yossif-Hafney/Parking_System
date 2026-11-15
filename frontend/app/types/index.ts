@@ -7,6 +7,11 @@ export interface LoginResponse {
   role?: string;
 }
 
+export interface RegisterResponse {
+  success: boolean;
+  message: string;
+}
+
 export interface ParkResponse {
   message?: string;
   plate?: string;
